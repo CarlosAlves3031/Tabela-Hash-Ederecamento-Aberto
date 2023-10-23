@@ -1,17 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#import "clientes.h"
+
 
 #define TAMANHO_HASH 7
 #define REGISTRO_CLIENTE "clientes.dat"
 #define METADADOS "meta.dat"
 
-typedef struct Cliente {
-    int chave;
-    char nome[50];
-    int estado;
-    int prox;
-} Cliente;
 
 Cliente criarCliente(int chavecliente, const char *nomecliente) {
     Cliente novo;
