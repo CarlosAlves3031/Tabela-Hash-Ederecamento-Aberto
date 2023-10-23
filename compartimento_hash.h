@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#import "clientes.h"
+#include "clientes.h"
 
 
 #define TAMANHO_HASH 7
