@@ -24,12 +24,13 @@ Cliente criarCliente(int chavecliente, const char *nomecliente) {
 
 // Endereçamento Aberto Quadrático
 int incremento_quadratico(int tentativa) {
-    return tentativa * tentativa; // Fórmula de incremento quadrático
+    return (C1 * tentativa + C2 * tentativa * tentativa) % TAMANHO_HASH;
 }
 
 // Endereçamento Aberto Linear
-int incremento_linear(int tentativa) {
-    return tentativa; // Incremento linear
+int incremento_linear(int tentativa, int chave) {
+    int h_x = chave % TAMANHO_HASH; // h'(x) = x mod 23
+    return (h_x + tentativa) % TAMANHO_HASH;
 }
 
 // Endereçamento Aberto Duplo
