@@ -49,7 +49,7 @@ void inserirCliente(FILE *tabhash, const char *nomeArquivo, Cliente *cliente, in
 
         // Verifica se a posição está ocupada
         fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
-        Cliente checagem;
+        Cliente * checagem;
         fread(&checagem, sizeof(Cliente), 1, tabhash);
 
         if (checagem.chave == cliente->chave) {
