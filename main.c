@@ -4,7 +4,7 @@
 #include "compartimento_hash.h"
 
 
-void menu(FILE *meta, FILE *clientes){
+void menu(FILE *meta, FILE *clientes, int modo){
     int escolha, chave;
     char nome[100];
     Cliente *novo;
@@ -73,6 +73,7 @@ void menu(FILE *meta, FILE *clientes){
 int main(){
     FILE *meta;
     FILE *clientes;
+    int x;
 
     if ((meta = fopen("meta.dat", "r+b")) == NULL){
     printf("Erro ao abrir o arquivo da tabela Meta");
@@ -83,9 +84,15 @@ int main(){
     printf("Erro ao abrir o arquivo da tabela Clientes");
     exit(1);
     }
-    
-    menu(meta, clientes);
-    
+
+    printf("Qual tipo de tratamento de dispersão você deseja:\n 1- Tentativa linear \n 2 - Tentativa quadrática \n 3- Disperão dupla\n");
+    scanf("%d", &x);
+
+    if(x<1 || x>3){
+        printf("Opção invalida");
+    }else{
+        menu(meta, clientes, x);
+    }
 
     return 0;
 }
