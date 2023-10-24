@@ -30,32 +30,47 @@ int incremento_linear(int tentativa, int chave) {
 }
 
 // Endereçamento Aberto Duplo
-int hash_duplo(int chave, int tentativa) {
+int hash_duplo( int tentativa, int chave) {
     int hash1 = chave % TAMANHO_HASH;
     int hash2 = 1 + (chave % (TAMANHO_HASH - 1)); // Escolha um segundo hash
     return (hash1 + tentativa * hash2) % TAMANHO_HASH;
 }
 
 // Insere um cliente na tabela hash
-void inserirCliente(FILE *tabhash, const char *nomeArquivo, Cliente *cliente, int (*probe)(int, int)) {
+void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int, int), int modelo) {
+    Cliente * checagem;
     int posicao, tentativa = 0;
     posicao = cliente->chave % TAMANHO_HASH;
 
-    while (1) {
-        posicao = (posicao + probe(cliente->chave, tentativa)) % TAMANHO_HASH;
-
-        // Verifica se a posição está ocupada
-        fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
-        Cliente * checagem;
-        fread(&checagem, sizeof(Cliente), 1, tabhash);
-
-        if (checagem.chave == cliente->chave) {
+    
+    if (checagem.chave == cliente->chave) {
             printf("A chave escolhida já é cadastrada pelo cliente %s, por favor escolha uma que não esteja em uso.\n", checagem.nome);
             return;
         }
 
+    while (1) {
+        if(modelo == 1){
+            posicao = incremento_linear(tentativa, novo->chave);
+        }
+        else if(modelo == 2){
+            posicao = incremento_quadratico(tentativa, novo->chave);
+        }
+        else{ 
+            posicao = hash_duplo(tentativa, novo->chave);
+        }
+
+        // Verifica se a posição está ocupado
+
+        rewind(clientes);
+        fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
+     
+        fread(&checagem->chave, sizeof(int), 1, clientes);
+        fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+        fread(checagem->estado, sizeof(int), 1, clientes);
+        fread(checagem->prox, sizeof(int), 1, clientes);
+        
         // Se a posição estiver vazia, insere o cliente
-        if (checagem.chave == -1) {
+        if (checagem.estado == 0) {
             fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
             fwrite(cliente, sizeof(Cliente), 1, tabhash);
             fflush(tabhash);
