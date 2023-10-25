@@ -10,17 +10,25 @@
 
 
 Cliente *criarCliente(int chavecliente, const char *nomecliente) {
-    Cliente novo;
-    novo.chave = chavecliente;
-    strcpy(novo.nome, nomecliente);
-    novo.estado = 1;
-    novo.prox = -1;
+    Cliente *novo = (Cliente *)malloc(sizeof(Cliente));
+    novo->chave = chavecliente;
+    strcpy(novo->nome, nomecliente);
+    novo->estado = 1;
+    novo->prox = -1;
     return novo;
 }
 
 // Endereçamento Aberto Quadrático
-int incremento_quadratico(int tentativa) {
-    return (C1 * tentativa + C2 * tentativa * tentativa) % TAMANHO_HASH;
+int incremento_quadratico(int tentativa, int chave) {
+    int base;
+    if(tentativa == 0){
+        return chave % TAMANHO_HASH;
+    }
+    else{
+        base = incremento_quadratico(tentativa - 1, chave);
+        return base % TAMANHO_HASH;
+    }
+    //return (C1 * tentativa + C2 * tentativa * tentativa) % TAMANHO_HASH;
 }
 
 // Endereçamento Aberto Linear
@@ -37,36 +45,36 @@ int hash_duplo( int tentativa, int chave) {
 }
 
 // Insere um cliente na tabela hash
-void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int, int), int modelo) {
+void inserirCliente(FILE *clientes, FILE *meta, Cliente *info, int (*probe)(int, int), int modelo) {
     Cliente * checagem;
-    int posicao, tentativa, anterior, pontant;
+    int posicao, tentativa, anterior, pontant, validade = 0;
 
     tentativa = 0;
     anterior = -1;
     pontant = 0;
-    posicao = cliente->chave % TAMANHO_HASH;
+    posicao = info->chave % TAMANHO_HASH;
 
-    checagem = busca(clientes, novo->chave);
-    if (checagem.chave == cliente->chave) {
+    checagem = buscarCliente(clientes, info->chave, modelo);
+    if (checagem->chave == info->chave) {
             printf("A chave escolhida já é cadastrada pelo cliente %s, por favor escolha uma que não esteja em uso.\n", checagem.nome);
             return;
         }
 
     while (validade == 0) {
         if(modelo == 1){
-            posicao = incremento_linear(tentativa, novo->chave);
+            posicao = incremento_linear(tentativa, info->chave);
         }
         else if(modelo == 2){
-            posicao = incremento_quadratico(tentativa, novo->chave);
+            posicao = incremento_quadratico(tentativa, info->chave);
         }
         else{ 
-            posicao = hash_duplo(tentativa, novo->chave);
+            posicao = hash_duplo(tentativa, info->chave);
         }
        
         // Verifica se a posição está ocupado
 
         rewind(clientes);
-        fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
+        fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
      
         fread(&checagem->chave, sizeof(int), 1, clientes);
         fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
@@ -115,26 +123,40 @@ void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int,
 }
 
 // Função para buscar um cliente na tabela hash
-Cliente buscarCliente(FILE *tabhash, int chave, int (*probe)(int, int)) {
-    int posicao, tentativa = 0;
-    posicao = chave % TAMANHO_HASH;
+Cliente *buscarCliente(FILE *clientes, int chave, int modelo) {
+    Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
+    int validade = 0, posicao, tentativa = 0;
+    
 
-    while (1) {
-        posicao = (posicao + probe(chave, tentativa)) % TAMANHO_HASH;
+    while (validade == 0) {
+        rewind(clientes);
+        if(modelo == 1){
+            posicao = incremento_linear(tentativa, chave);
+        }
+        else if(modelo == 2){
+            posicao = incremento_quadratico(tentativa, chave);
+        }
+        else{ 
+            posicao = hash_duplo(tentativa, chave);
+        }
+       
+        
+        //posicao = (posicao + probe(chave, tentativa)) % TAMANHO_HASH;
 
-        fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
-        Cliente checagem;
-        fread(&checagem, sizeof(Cliente), 1, tabhash);
+        fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
 
-        if (checagem.chave == chave) {
+        //fread(checagem, sizeof(Cliente), 1, clientes);
+        fread(&checagem->chave, sizeof(int), 1, clientes);
+        fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+        fread(&checagem->estado, sizeof(int), 1, clientes);
+        fread(&checagem->prox, sizeof(int), 1, clientes);
+        if (checagem->chave == chave) {
             return checagem; // Retorna o cliente encontrado
         }
 
-        if (checagem.chave == -1 || tentativa >= TAMANHO_HASH) {
-            // Cliente não encontrado ou percorreu toda a tabela
-            Cliente naoEncontrado;
-            naoEncontrado.chave = -1;
-            return naoEncontrado;
+        if (checagem->prox == -1 || tentativa >= TAMANHO_HASH) {
+            checagem->chave = -1;
+            return checagem;
         }
 
         tentativa++;
@@ -142,7 +164,7 @@ Cliente buscarCliente(FILE *tabhash, int chave, int (*probe)(int, int)) {
 }
 
 // Insere um cliente na tabela hash usando endereçamento aberto linear
-void inserir_linear(FILE *tabhash, const char *nomeArquivo, Cliente *cliente) {
+/*void inserir_linear(FILE *tabhash, const char *nomeArquivo, Cliente *cliente) {
     int posicao, tentativa = 0;
     posicao = cliente->chave % TAMANHO_HASH;
 
@@ -196,3 +218,4 @@ void inserir_duplo(FILE *tabhash, const char *nomeArquivo, Cliente *cliente) {
         tentativa++;
     }
 }
+*/
