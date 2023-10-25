@@ -9,7 +9,7 @@
 #define METADADOS "meta.dat"
 
 
-Cliente criarCliente(int chavecliente, const char *nomecliente) {
+Cliente *criarCliente(int chavecliente, const char *nomecliente) {
     Cliente novo;
     novo.chave = chavecliente;
     strcpy(novo.nome, nomecliente);
