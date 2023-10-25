@@ -39,7 +39,9 @@ int hash_duplo( int tentativa, int chave) {
 // Insere um cliente na tabela hash
 void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int, int), int modelo) {
     Cliente * checagem;
-    int posicao, tentativa = 0;
+    int posicao, tentativa, anterior, pontant;
+
+    tentativa = 0;
     posicao = cliente->chave % TAMANHO_HASH;
 
     checagem = busca(clientes, novo->chave);
@@ -58,7 +60,7 @@ void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int,
         else{ 
             posicao = hash_duplo(tentativa, novo->chave);
         }
-
+       
         // Verifica se a posição está ocupado
 
         rewind(clientes);
@@ -66,23 +68,48 @@ void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int,
      
         fread(&checagem->chave, sizeof(int), 1, clientes);
         fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-        fread(checagem->estado, sizeof(int), 1, clientes);
-        fread(checagem->prox, sizeof(int), 1, clientes);
-        
+        fread(&checagem->estado, sizeof(int), 1, clientes);
+        fread(&checagem->prox, sizeof(int), 1, clientes);
         // Se a posição estiver vazia, insere o cliente
         if (checagem->estado == 0){
-            validade = 1;
+            if(pontant != -1){
+                validade = 1;
+            }
+            else{
+                rewind(clientes);
+                fseek(clientes, sizeof(Cliente) * anterior, SEEK_SET);
+            
+                fread(&checagem->chave, sizeof(int), 1, clientes);
+                fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+                fread(&checagem->estado, sizeof(int), 1, clientes);
+                fwrite(&posicao, sizeof(int), 1, clientes);
+                validade = 2;
+            }
             /*fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
             fwrite(cliente, sizeof(Cliente), 1, tabhash);
             fflush(tabhash);
             return;*/
+        }else if(tentativa >= TAMANHO_HASH){
+            validade = 3;
         }
-        else if(checagem->prox = -1){
-            
-        }
-
+        anterior = posicao;
+        pontant = checagem->prox;
         tentativa++;
     }
+    if(validade != 3){
+        rewind(clientes);
+        fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+        fwrite(&info->chave, sizeof(int), 1, clientes);
+        fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
+        fwrite(&info->estado, sizeof(int), 1, clientes);
+        if(validade == 2){
+            fwrite(&info->prox, sizeof(int), 1, clientes);
+        }
+    else{
+        printf("Não há espaço no compartimento");
+    }
+    }
+    
 }
 
 // Função para buscar um cliente na tabela hash
