@@ -42,13 +42,13 @@ void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int,
     int posicao, tentativa = 0;
     posicao = cliente->chave % TAMANHO_HASH;
 
-    
+    checagem = busca(clientes, novo->chave);
     if (checagem.chave == cliente->chave) {
             printf("A chave escolhida já é cadastrada pelo cliente %s, por favor escolha uma que não esteja em uso.\n", checagem.nome);
             return;
         }
 
-    while (1) {
+    while (validade == 0) {
         if(modelo == 1){
             posicao = incremento_linear(tentativa, novo->chave);
         }
@@ -70,11 +70,15 @@ void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int,
         fread(checagem->prox, sizeof(int), 1, clientes);
         
         // Se a posição estiver vazia, insere o cliente
-        if (checagem.estado == 0) {
-            fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
+        if (checagem->estado == 0){
+            validade = 1;
+            /*fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
             fwrite(cliente, sizeof(Cliente), 1, tabhash);
             fflush(tabhash);
-            return;
+            return;*/
+        }
+        else if(checagem->prox = -1){
+            
         }
 
         tentativa++;
