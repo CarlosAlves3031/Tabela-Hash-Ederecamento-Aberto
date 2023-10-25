@@ -43,7 +43,7 @@ void inserirCliente(FILE *clientes, FILE *meta, Cliente *novo, int (*probe)(int,
 
     tentativa = 0;
     anterior = -1;
-    pontant = -1;
+    pontant = 0;
     posicao = cliente->chave % TAMANHO_HASH;
 
     checagem = busca(clientes, novo->chave);
