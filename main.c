@@ -38,20 +38,29 @@ void menu(FILE *meta, FILE *clientes, int modo){
         case (2):
             printf("Digite a chave do cliente que você quer deletar:\n");
             scanf("%d", &chave);
+
+            double time_spent2 = 0.0;
+
+            clock_t begin2 = clock();
             deletar(clientes, chave, modo);
+            clock_t end2 = clock();
+
+            time_spent2 += (double)(end2 - begin2) / CLOCKS_PER_SEC;
+            printf("> Tempo de deleção: %f ms\n", time_spent2 * 1000);
+
             free(novo);
             break;
         case (3):
             printf("Digite a chave do cliente que você quer buscar:\n");
             scanf("%d", &chave);
 
-            double time_spent2 = 0.0;
+            double time_spent3 = 0.0;
 
-            clock_t begin2 = clock();
+            clock_t begin3 = clock();
             novo = buscarCliente(clientes, chave, modo);
-            clock_t end2 = clock();
+            clock_t end3 = clock();
 
-            time_spent2 += (double)(end2 - begin2) / CLOCKS_PER_SEC; 
+            time_spent3 += (double)(end3 - begin3) / CLOCKS_PER_SEC; 
 
 
             if(novo->chave == -1){
@@ -60,7 +69,7 @@ void menu(FILE *meta, FILE *clientes, int modo){
             else{
                 printf("> Chave do cliente: %d \n", novo->chave);
                 printf("> Nome do cliente: %s \n", novo->nome);
-                printf("> Tempo de busca: %f ms\n", time_spent2 * 1000);
+                printf("> Tempo de busca: %f ms\n", time_spent3 * 1000);
             }
             break;
         case (4):
