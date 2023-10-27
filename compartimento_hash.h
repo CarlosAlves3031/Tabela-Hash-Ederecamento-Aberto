@@ -44,17 +44,19 @@ Cliente *buscarCliente(FILE *clientes, int chave, int modelo) {
         fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
         fread(&checagem->estado, sizeof(int), 1, clientes);
         if (checagem->chave == chave) {
+            printf("quantidade de colisoes %d \n", tentativa);
             return checagem; // Retorna o cliente encontrado
         }
 
         if (tentativa >= TAMANHO_HASH) {
             checagem->chave = -1;
+            printf("quantidade de colisoes %d \n", tentativa);
             return checagem;
         }
 
         tentativa++;
     }
-    printf("quantidade de colisoes %d \n", tentativa);
+    
 }
 
 
