@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "clientes.h"
 #include "compartimento_hash.h"
+#include <time.h>
 
 
 void menu(FILE *meta, FILE *clientes, int modo){
@@ -34,14 +35,23 @@ void menu(FILE *meta, FILE *clientes, int modo){
         case (3):
             printf("Digite a chave do cliente que você quer buscar:\n");
             scanf("%d", &chave);
-    
+
+            double time_spent = 0.0;
+
+            clock_t begin = clock();
             novo = buscarCliente(clientes, chave, modo);
+            clock_t end = clock();
+
+            time_spent += (double)(end - begin) / CLOCKS_PER_SEC; 
+
+
             if(novo->chave == -1){
                 printf("Cliente não encontrado,por favor insira ele na Hash primeiro");
             }
             else{
                 printf("> Chave do cliente: %d \n", novo->chave);
                 printf("> Nome do cliente: %s \n", novo->nome);
+                printf("> Tempo de busca: %f ms\n", time_spent * 1000);
             }
             break;
         case (4):
@@ -78,7 +88,7 @@ int main(){
     exit(1);
     }
 
-    printf("Qual tipo de tratamento de dispersão você deseja:\n 1- Tentativa linear \n 2 - Tentativa quadrática \n 3- Disperão dupla\n");
+    printf("Qual tipo de tratamento de dispersão você deseja:\n 1 - Tentativa linear \n 2 - Tentativa quadrática \n 3 - Dispersão dupla\n");
     scanf("%d", &x);
 
     if(x<1 || x>3){
