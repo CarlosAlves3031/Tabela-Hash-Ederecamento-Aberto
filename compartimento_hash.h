@@ -44,31 +44,31 @@ Cliente *buscarCliente(FILE *clientes, int chave, int modelo) {
         fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
         fread(&checagem->estado, sizeof(int), 1, clientes);
         if (checagem->chave == chave) {
-            printf("quantidade de colisoes %d \n", tentativa);
             return checagem; // Retorna o cliente encontrado
         }
 
         if (tentativa >= TAMANHO_HASH) {
             checagem->chave = -1;
-            printf("quantidade de colisoes %d \n", tentativa);
             return checagem;
         }
 
         tentativa++;
     }
-    
 }
 
 
 // Endereçamento Aberto Quadrático
 int incremento_quadratico(int tentativa, int chave) {
-    int base;
+    int base, solucao;
+    //printf("Tentativa %d recursao \n", tentativa);
     if(tentativa == 0){
         return chave % TAMANHO_HASH;
     }
     else{
         base = incremento_quadratico(tentativa - 1, chave);
-        return base % TAMANHO_HASH;
+        //printf("resultado recursão: %d \n", base);
+        solucao = (base + tentativa) % TAMANHO_HASH;
+        return solucao;
     }
     //return (C1 * tentativa + C2 * tentativa * tentativa) % TAMANHO_HASH;
 }
@@ -110,9 +110,9 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         else{ 
             posicao = hash_duplo(tentativa, info->chave);
         }
-       
+        printf("Posicao escolhida %d \n", posicao);
         // Verifica se a posição está ocupado
-
+        printf("Tentativas loop %d \n", tentativa);
         rewind(clientes);
         fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
      
@@ -120,7 +120,7 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
         fread(&checagem->estado, sizeof(int), 1, clientes);
         // Se a posição estiver vazia, insere o cliente
-        if (checagem->estado == 0){
+        if (checagem->estado <= 0){
             validade = 1;
             
             /*fseek(tabhash, sizeof(Cliente) * posicao, SEEK_SET);
@@ -131,6 +131,7 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         else if(tentativa >= TAMANHO_HASH){
             validade = 3;
         }    
+        printf("quantidade de colisoes %d \n", tentativa );
         tentativa++;
     }
     if(validade != 3){
@@ -144,7 +145,7 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         printf("Não há espaço no compartimento\n");
     }
 
-    printf("quantidade de colisoes %d \n", tentativa);
+    
 }
 
 void deletar(FILE *clientes, int chave, int modelo){
