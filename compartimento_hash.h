@@ -54,6 +54,7 @@ Cliente *buscarCliente(FILE *clientes, int chave, int modelo) {
 
         tentativa++;
     }
+    printf("quantidade de colisoes %d \n", tentativa);
 }
 
 
@@ -141,7 +142,7 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         printf("Não há espaço no compartimento\n");
     }
 
-    printf("quantidade de colisoes %d \n", tentativa)
+    printf("quantidade de colisoes %d \n", tentativa);
 }
 
 void deletar(FILE *clientes, int chave, int modelo){
