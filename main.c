@@ -22,7 +22,16 @@ void menu(FILE *meta, FILE *clientes, int modo){
             printf("Digite o nome do cliente que você deseja inserir:\n");
             scanf("%s", nome);
             novo = criarCliente(chave, nome);
+
+            double time_spent1 = 0.0;
+
+            clock_t begin1 = clock();
             inserirCliente(clientes, novo, modo);
+            clock_t end1 = clock();
+            time_spent1 += (double)(end1 - begin1) / CLOCKS_PER_SEC;
+
+            printf("> Tempo de inserção: %f ms\n", time_spent1 * 1000);
+
             free(novo);
             //printf("fechando arquivos e ponteiros");
             break;
@@ -36,13 +45,13 @@ void menu(FILE *meta, FILE *clientes, int modo){
             printf("Digite a chave do cliente que você quer buscar:\n");
             scanf("%d", &chave);
 
-            double time_spent = 0.0;
+            double time_spent2 = 0.0;
 
-            clock_t begin = clock();
+            clock_t begin2 = clock();
             novo = buscarCliente(clientes, chave, modo);
-            clock_t end = clock();
+            clock_t end2 = clock();
 
-            time_spent += (double)(end - begin) / CLOCKS_PER_SEC; 
+            time_spent2 += (double)(end2 - begin2) / CLOCKS_PER_SEC; 
 
 
             if(novo->chave == -1){
@@ -51,7 +60,7 @@ void menu(FILE *meta, FILE *clientes, int modo){
             else{
                 printf("> Chave do cliente: %d \n", novo->chave);
                 printf("> Nome do cliente: %s \n", novo->nome);
-                printf("> Tempo de busca: %f ms\n", time_spent * 1000);
+                printf("> Tempo de busca: %f ms\n", time_spent2 * 1000);
             }
             break;
         case (4):
