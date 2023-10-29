@@ -4,7 +4,8 @@
 #include "clientes.h"
 
 
-#define TAMANHO_HASH 8
+#define TAMANHO_HASH 32
+
 #define REGISTRO_CLIENTE "clientes.dat"
 #define METADADOS "meta.dat"
 
@@ -89,7 +90,7 @@ int hash_duplo( int tentativa, int chave) {
 // Insere um cliente na tabela hash
 void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
     Cliente * checagem;
-    int posicao, tentativa, validade = 0;
+    int posicao, tentativa, total_col, validade = 0;
     
 
     tentativa = 0;
@@ -131,6 +132,7 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         else if(tentativa >= TAMANHO_HASH){
             validade = 3;
         }    
+        total_col = total_col + tentativa;
         printf("quantidade de colisoes %d \n", tentativa );
         tentativa++;
     }
@@ -145,7 +147,7 @@ void inserirCliente(FILE *clientes, Cliente *info, int modelo) {
         printf("Não há espaço no compartimento\n");
     }
 
-    
+    printf("Total de colisões: %d\n", total_col);
 }
 
 void deletar(FILE *clientes, int chave, int modelo){
